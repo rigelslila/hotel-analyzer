@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="FARAONI">
+<meta name="theme-color" content="#1a1a18">
+<title>FARAONI — Analisi Restyling Hotel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--black:#1a1a18;--gold:#c9a96e;--white:#fff;--off-white:#f7f5f0;--surface:#fff;--surface2:#f7f5f0;--border:#e8e4dc;--text:#1a1a18;--text-sec:#6b6860;--text-ter:#a8a49c;--green:#1a7a5a;--green-bg:#eaf5ef;--red:#8a2828;--amber:#8a5e0a;--amber-bg:#fdf3e0;--blue:#1a4a8a;--blue-bg:#eaf0fc}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Arial,sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;padding-bottom:40px}
+.app-header{background:var(--black);padding:48px 20px 24px;padding-top:calc(48px + env(safe-area-inset-top));position:relative;overflow:hidden}
+.app-header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 80% 50%,rgba(201,169,110,.08) 0%,transparent 60%);pointer-events:none}
+.app-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.header-inner{max-width:480px;margin:0 auto;position:relative;z-index:1}
+.logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.logo-img{height:26px;width:auto;filter:brightness(0) invert(1)}
+.hd{width:1px;height:22px;background:rgba(255,255,255,.2)}
+.header-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:500}
+.header-title{font-size:26px;font-weight:300;color:var(--white);letter-spacing:-.4px;line-height:1.2;margin-bottom:6px}
+.header-title strong{font-weight:700;color:var(--gold)}
+.header-sub{font-size:13px;color:rgba(255,255,255,.4)}
+.progress-bar{height:2px;background:rgba(0,0,0,.08)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e8c480);transition:width .4s ease;width:0%}
+.content{padding:20px 16px 20px;max-width:480px;margin:0 auto}
+.slabel{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-ter);margin:22px 0 8px 2px}
+.slabel:first-of-type{margin-top:4px}
+.card{background:var(--surface);border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:2px}
+.field{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.field:last-child{border-bottom:none}
+.field-left{flex:1;min-width:0}
+.field label{font-size:14px;color:var(--text);font-weight:400;display:block}
+.field .hint{font-size:11px;color:var(--text-ter);margin-top:2px}
+.field select,.field input{font-size:14px;background:none;border:none;outline:none;text-align:right;font-family:inherit;color:var(--text);font-weight:500;-webkit-appearance:none}
+.field input[type=number]{width:72px}
+.field input[type=text]{width:150px;font-weight:400;color:var(--text-sec)}
+.field select{max-width:190px;cursor:pointer}
+select:disabled{color:var(--text-ter)}
+.cta{width:100%;padding:16px;font-size:15px;font-weight:600;border:none;border-radius:14px;background:var(--black);color:var(--white);cursor:pointer;margin-top:24px;letter-spacing:.2px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.cta::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.cta:active{transform:scale(.98);opacity:.9}
+.results{display:none}
+.results.show{display:block}
+.hotel-tag{background:var(--black);border-radius:16px;padding:16px 18px;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.hotel-tag::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.ht-name{font-size:17px;font-weight:600;color:var(--white);margin-bottom:5px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.ht-meta{font-size:12px;color:rgba(255,255,255,.45);line-height:1.8}
+.ht-badge{display:inline-block;font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600}
+.badge-old{background:rgba(163,45,45,.35);color:#f09090}
+.badge-mid{background:rgba(186,117,23,.35);color:#f0c070}
+.badge-new{background:rgba(26,122,90,.35);color:#70d0a0}
+.three-msgs{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.msg-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:16px 16px 14px;position:relative;overflow:hidden}
+.msg-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.msg-card.loss::before{background:var(--red)}
+.msg-card.gain::before{background:var(--green)}
+.msg-card.pay::before{background:var(--gold)}
+.msg-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-ter);margin-bottom:8px}
+.big-num{font-size:34px;font-weight:700;letter-spacing:-.8px;line-height:1;margin-bottom:6px}
+.msub{font-size:13px;color:var(--text-sec);line-height:1.4}
+.dc{background:var(--surface);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
+.dc-head{padding:11px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.dc-head h4{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-ter)}
+.dr{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 16px;border-bottom:1px solid var(--border);gap:12px}
+.dr:last-child{border-bottom:none}
+.dl{font-size:13px;color:var(--text-sec);flex:1;line-height:1.4}
+.dv{font-size:13px;font-weight:600;color:var(--text);text-align:right;flex-shrink:0}
+.insight-box{padding:12px 16px;font-size:13px;color:var(--text-sec);line-height:1.5;background:var(--surface2);border-top:1px solid var(--border)}
+.fascia-tabs{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.fascia-tab{flex:1;padding:8px 4px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:10px;background:none;color:var(--text-ter);cursor:pointer;text-align:center}
+.fascia-tab.eco.active{background:#2a5a3a;color:#fff;border-color:#2a5a3a}
+.fascia-tab.std.active{background:#1a4a8a;color:#fff;border-color:#1a4a8a}
+.fascia-tab.sup.active{background:#7a4a10;color:#fff;border-color:#7a4a10}
+.voce-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px}
+.voce-row:last-child{border-bottom:none}
+.voce-name{font-size:13px;color:var(--text);font-weight:500}
+.voce-desc{font-size:11px;color:var(--text-ter);margin-top:2px}
+.voce-price{font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+.fascia-total{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:var(--surface2);border-top:1px solid var(--border)}
+.ft-label{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text-ter)}
+.ft-value{font-size:20px;font-weight:700}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);margin:0 16px 14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.compare-cell{background:var(--surface);padding:10px 8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-ter)}
+.compare-cell.eco-h{background:#eaf5ef;color:#1a7a5a}
+.compare-cell.std-h{background:#eaf0fc;color:#1a4a8a}
+.compare-cell.sup-h{background:#fdf3e0;color:#8a5e0a}
+.compare-price{font-size:15px;font-weight:700;color:var(--text);margin-top:4px}
+.compare-tot{font-size:11px;color:var(--text-ter);margin-top:2px}
+.payback-track{display:flex;gap:6px;flex-wrap:wrap;padding:14px 16px}
+.py-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.disclaimer{font-size:11px;color:var(--text-ter);line-height:1.6;padding:10px 4px 16px}
+.btn-row{display:flex;gap:10px;margin-bottom:8px}
+.back-btn{flex:1;padding:14px;font-size:14px;font-weight:500;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer}
+.advice-btn{flex:2;padding:14px;font-size:14px;font-weight:600;background:var(--black);border:none;border-radius:12px;color:var(--white);cursor:pointer;position:relative;overflow:hidden}
+.advice-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.back-btn:active,.advice-btn:active{opacity:.8;transform:scale(.98)}
+</style>
+</head>
+<body>
+<div class="app-header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <img class="logo-img" id="logo-img" src="https://faraoni79.it/wp-content/uploads/2024/07/logo-dark.png" alt="FARAONI">
+      <div class="hd"></div>
+      <span class="header-tag">Hotel Advisor</span>
+    </div>
+    <div class="header-title">Analisi <strong>investimento</strong><br>restyling hotel</div>
+    <div class="header-sub">Stima il potenziale della tua struttura</div>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<div class="content">
+  <div id="form">
+    <div class="slabel">La struttura</div>
+    <div class="card">
+      <div class="field"><div class="field-left"><label>Nome hotel</label><div class="hint">Opzionale</div></div><input type="text" id="nome" placeholder="Es. Hotel Sole"></div>
+      <div class="field"><label>Regione</label><select id="regione" onchange="updateProv()"><option value="">— seleziona —</option><option value="veneto">Veneto</option><option value="trentino">Trentino-Alto Adige</option><option value="friuli">Friuli-Venezia Giulia</option><option value="emilia">Emilia-Romagna</option></select></div>
+      <div class="field"><label>Provincia</label><select id="provincia" disabled><option value="">— prima regione —</option></select></div>
+      <div class="field"><label>Categoria</label><select id="stelle"><option value="1">1 stella</option><option value="2">2 stelle</option><option value="3" selected>3 stelle</option><option value="4">4 stelle</option><option value="5">5 stelle</option></select></div>
+      <div class="field"><label>Numero camere totali</label><input type="number" id="camere" value="30" min="1" max="500"></div>
+      <div class="field"><label>Tipo di location</label><select id="location"><option value="city">Centro città</option><option value="leisure" selected>Leisure / turismo</option><option value="business">Business / fiere</option><option value="seaside">Mare / lago</option><option value="mountain">Montagna</option></select></div>
+    </div>
+    <div class="slabel">Andamento attuale</div>
+    <div class="card">
+      <div class="field"><div class="field-left"><label>Occupazione media</label><div class="hint">% annua stimata</div></div><input type="number" id="occ" value="62" min="10" max="100"></div>
+      <div class="field"><div class="field-left"><label>Prezzo medio / notte</label><div class="hint">Tariffa media in €</div></div><input type="number" id="adr" value="95" min="20"></div>
+      <div class="field"><label>Stagionalità</label><select id="stagionalita"><option value="annual" selected>Tutto l'anno</option><option value="high">Alta stagione (8-10 mesi)</option><option value="mid">Stagionale (5-7 mesi)</option><option value="short">Breve (3-4 mesi)</option></select></div>
+      <div class="field"><label>Target ospiti</label><select id="target"><option value="couples">Coppie / romantico</option><option value="families" selected>Famiglie</option><option value="business">Business / corporate</option><option value="groups">Gruppi / tour operator</option><option value="mixed">Misto</option></select></div>
+    </div>
+    <div class="slabel">Intervento</div>
+    <div class="card">
+      <div class="field"><label>Ultimo restyling</label><select id="aging"><option value="recent">Meno di 3 anni fa</option><option value="mid" selected>3-8 anni fa</option><option value="old">Piu di 8 anni fa</option><option value="never">Mai fatto</option></select></div>
+      <div class="field"><label>Ambito prioritario</label><select id="ambito" onchange="toggleArredo()"><option value="camere">Solo camere</option><option value="comuni">Aree comuni / lobby</option><option value="fb">Bar / ristorante</option><option value="tutto" selected>Intervento completo</option></select></div>
+      <div class="field" id="fn"><div class="field-left"><label>Camere da rinnovare</label><div class="hint">Quante camere vuoi rinnovare</div></div><input type="number" id="ncamere" value="15" min="1" max="500"></div>
+      <div class="field" id="ff"><label>Fascia qualita arredo</label><select id="fascia"><option value="eco">Economy — essenziale</option><option value="std" selected>Standard — buon livello</option><option value="sup">Superior — design pregiato</option></select></div>
+    </div>
+    <button class="cta" onclick="go()">Calcola il potenziale</button>
+  </div>
+  <div class="results" id="results">
+    <div class="hotel-tag" id="htag"></div>
+    <div class="three-msgs" id="msgs"></div>
+    <div class="dc"><div class="dc-head"><h4>Profilo struttura</h4></div><div id="dp"></div></div>
+    <div class="dc"><div class="dc-head"><h4>Potenziale non espresso</h4></div><div id="dl"></div></div>
+    <div class="dc"><div class="dc-head"><h4>Scenario post-restyling</h4></div><div id="dg"></div></div>
+    <div class="dc" id="da" style="display:none"><div class="dc-head"><h4>Dettaglio arredo camere — fascia selezionata</h4></div><div id="dai"></div></div>
+    <div class="dc"><div class="dc-head"><h4>Piano di rientro</h4></div><div id="dpb"></div></div>
+    <p class="disclaimer">Stime basate su benchmark medi del settore alberghiero italiano calibrati per provincia, categoria, location, stagionalita e target. I costi arredo sono stime medie di mercato per arredo contract su misura prodotto da Faraoni. Documento orientativo — non costituisce offerta commerciale ne consulenza finanziaria.</p>
+    <div class="btn-row">
+      <button class="back-btn" onclick="goBack()">Modifica</button>
+      <button class="advice-btn" onclick="alert('Apri questo strumento online per le argomentazioni di vendita.')">Argomentazioni</button>
+    </div>
+  </div>
+</div>
+<script>
+var prov={veneto:[{v:'VE',l:'Venezia'},{v:'VR',l:'Verona'},{v:'PD',l:'Padova'},{v:'TV',l:'Treviso'},{v:'VI',l:'Vicenza'},{v:'BL',l:'Belluno'},{v:'RO',l:'Rovigo'}],trentino:[{v:'TN',l:'Trento'},{v:'BZ',l:'Bolzano / Bozen'}],friuli:[{v:'TS',l:'Trieste'},{v:'UD',l:'Udine'},{v:'GO',l:'Gorizia'},{v:'PN',l:'Pordenone'}],emilia:[{v:'BO',l:'Bologna'},{v:'FE',l:'Ferrara'},{v:'MO',l:'Modena'},{v:'RE',l:'Reggio Emilia'},{v:'PR',l:'Parma'},{v:'PC',l:'Piacenza'},{v:'RA',l:'Ravenna'},{v:'FC',l:'Forli-Cesena'},{v:'RN',l:'Rimini'}]};
+var pbm={VE:[1.22,1.45],VR:[1.10,1.18],PD:[1.05,1.08],TV:[1.00,1.02],VI:[1.00,1.00],BL:[1.08,1.12],RO:[0.88,0.85],TN:[1.12,1.22],BZ:[1.18,1.38],TS:[1.05,1.10],UD:[1.00,1.02],GO:[0.95,0.95],PN:[0.92,0.90],BO:[1.10,1.15],FE:[0.92,0.90],MO:[1.00,1.02],RE:[0.98,0.98],PR:[1.02,1.05],PC:[0.90,0.88],RA:[1.04,1.06],FC:[1.02,1.04],RN:[1.15,1.20]};
+var rl={veneto:'Veneto',trentino:'Trentino-A.A.',friuli:'Friuli-V.G.',emilia:'Emilia-Romagna'};
+var bm={1:{occ:.55,adr:50,do:.06,da:4,ic:3500},2:{occ:.60,adr:70,do:.07,da:7,ic:5000},3:{occ:.65,adr:100,do:.09,da:13,ic:8000},4:{occ:.68,adr:158,do:.10,da:24,ic:14000},5:{occ:.72,adr:275,do:.10,da:44,ic:25000}};
+var lm={city:[1.06,1.05],leisure:[1.00,1.00],business:[1.08,1.03],seaside:[0.95,1.02],mountain:[0.93,1.05]};
+var ll={city:'Centro citta',leisure:'Leisure',business:'Business',seaside:'Mare / lago',mountain:'Montagna'};
+var st={annual:{g:365,oa:1.00,aa:1.00,l:"Tutto l'anno"},high:{g:300,oa:1.05,aa:1.05,l:'Alta stagione'},mid:{g:180,oa:1.10,aa:1.12,l:'Stagionale'},short:{g:110,oa:1.15,aa:1.20,l:'Breve stagione'}};
+var tg={couples:{om:1.10,am:1.20,l:'Coppie',i:'Gli ospiti in coppia sono molto sensibili all estetica: un restyling curato genera recensioni migliori e tariffe piu alte.'},families:{om:1.05,am:1.00,l:'Famiglie',i:'Le famiglie valutano spazi funzionali e arredi robusti. Un restyling orientato alla praticita aumenta fedelta e prenotazioni ripetute.'},business:{om:1.00,am:1.15,l:'Business',i:'Il target business premia ambienti professionali e moderni. Un restyling di qualita giustifica tariffe corporate piu alte e accordi aziendali.'},groups:{om:1.15,am:0.90,l:'Gruppi',i:'I gruppi cercano strutture affidabili e ben tenute. Un restyling attira tour operator di fascia superiore.'},mixed:{om:1.05,am:1.05,l:'Misto',i:'Una struttura multitarget beneficia di un restyling versatile che soddisfa sia chi cerca design sia funzionalita.'}};
+var ag={recent:{om:.4,am:.3,l:'Recente',c:'badge-new',u:'Bassa'},mid:{om:.8,am:.7,l:'Da aggiornare',c:'badge-mid',u:'Media'},old:{om:1.0,am:1.0,l:'Obsoleto',c:'badge-old',u:'Alta'},never:{om:1.2,am:1.1,l:'Mai rinnovato',c:'badge-old',u:'Molto alta'}};
+var am={camere:{m:.55,l:'Solo camere'},comuni:{m:.25,l:'Aree comuni'},fb:{m:.20,l:'Bar / ristorante'},tutto:{m:1.0,l:'Intervento completo'}};
+var sm={1:0.65,2:0.80,3:1.00,4:1.45,5:2.10};
+var fl={eco:'Economy',std:'Standard',sup:'Superior'};
+var fc={eco:'var(--green)',std:'var(--blue)',sup:'var(--amber)'};
+var fd={eco:'Materiali funzionali e duraturi, design pulito. Ideale per hotel 1-2 stelle o per massimizzare le camere rinnovate con budget contenuto.',std:'Buon livello qualitativo, materiali selezionati. Il punto di equilibrio ideale per hotel 3 stelle che vogliono migliorare la percezione senza eccedere nel budget.',sup:'Design curato, materiali pregiati, finiture di alto livello. Raccomandato per hotel 4 stelle o strutture che puntano a salire di categoria.'};
+var voci=[
+  {n:'Letto e testiera',d:'Struttura, testiera imbottita su misura',p:[380,680,1200]},
+  {n:'Armadio / guardaroba',d:'Struttura su misura con ante scorrevoli',p:[520,950,1800]},
+  {n:'Comodini e mensole',d:'Coppia comodini coordinati',p:[180,320,620]},
+  {n:'Scrittoio e sedia',d:'Piano lavoro con specchio o lampada integrata',p:[220,420,850]},
+  {n:'Arredo bagno',d:'Mobile lavabo, specchio, mensole, accessori',p:[350,680,1400]},
+  {n:'Tessili e tendaggi',d:'Tendaggi, copriletto, cuscini decorativi',p:[180,320,680]},
+  {n:'Illuminazione',d:'Plafoniere, lampade da comodino, led strip',p:[140,260,520]},
+  {n:'Pavimentazione',d:'Parquet flottante o gres effetto legno',p:[280,480,950]},
+  {n:'Finiture e verniciatura',d:'Boiserie, verniciature pareti, piccoli lavori',p:[150,280,560]}
+];
+
+function gv(id){return document.getElementById(id).value||'';}
+function gn(id){return parseFloat(document.getElementById(id).value)||0;}
+function fmt(x){return Math.round(x).toLocaleString('it-IT');}
+function fmtK(x){return x>=1000?'€'+Math.round(x/1000).toLocaleString('it-IT')+'K':'€'+Math.round(x);}
+function dr(l,v,c){return '<div class="dr"><span class="dl">'+l+'</span><span class="dv"'+(c?' style="color:'+c+'"':'')+'>'+v+'</span></div>';}
+
+function updateProv(){
+  var r=gv('regione'),s=document.getElementById('provincia');
+  s.innerHTML='<option value="">— seleziona —</option>';
+  if(r&&prov[r]){prov[r].forEach(function(p){var o=document.createElement('option');o.value=p.v;o.textContent=p.l;s.appendChild(o);});s.disabled=false;}
+  else s.disabled=true;
+  upProg();
+}
+
+function toggleArredo(){
+  var a=gv('ambito'),show=(a==='camere'||a==='tutto');
+  document.getElementById('fn').style.display=show?'flex':'none';
+  document.getElementById('ff').style.display=show?'flex':'none';
+}
+
+function upProg(){
+  var f=0;
+  ['nome','regione','provincia','stelle','camere','occ','adr','aging','ambito','ncamere'].forEach(function(id){var e=document.getElementById(id);if(e&&e.value&&e.value!='')f++;});
+  document.getElementById('progress').style.width=Math.round(f/10*100)+'%';
+}
+document.querySelectorAll('input,select').forEach(function(e){e.addEventListener('change',upProg);e.addEventListener('input',upProg);});
+
+function costoFascia(fk,stelle){
+  var fi={eco:0,std:1,sup:2}[fk],s=sm[stelle]||1,t=0;
+  voci.forEach(function(v){t+=Math.round(v.p[fi]*s);});
+  return t;
+}
+
+function renderArredo(fk,stelle,nc){
+  var fi={eco:0,std:1,sup:2}[fk],s=sm[stelle]||1,tot=0;
+  var tabs='<div class="fascia-tabs">'+
+    ['eco','std','sup'].map(function(k){return '<button class="fascia-tab '+k+(k===fk?' active':'')+'" onclick="switchF(\''+k+'\')">'+fl[k]+'</button>';}).join('')+
+  '</div>';
+  var rows='<div style="padding:10px 16px 8px;font-size:12px;color:var(--text-ter);line-height:1.5;border-bottom:1px solid var(--border)">'+fd[fk]+'</div>';
+  voci.forEach(function(v){var p=Math.round(v.p[fi]*s);tot+=p;rows+='<div class="voce-row"><div><div class="voce-name">'+v.n+'</div><div class="voce-desc">'+v.d+'</div></div><div class="voce-price">€'+fmt(p)+'</div></div>';});
+  var totTot=tot*nc;
+  var body=rows+'<div class="fascia-total"><div><div class="ft-label">Per camera</div><div style="font-size:11px;color:var(--text-ter);margin-top:2px">'+nc+' camere selezionate</div></div><div style="text-align:right"><div class="ft-value" style="color:'+fc[fk]+'">€'+fmt(tot)+'</div><div style="font-size:11px;color:var(--text-ter);margin-top:2px">Totale: €'+fmt(totTot)+'</div></div></div>';
+  var cgrid='<div style="padding:10px 16px 6px;background:var(--surface2);border-top:1px solid var(--border)"><div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-ter);margin-bottom:8px">Confronto 3 fasce — costo per camera</div><div class="compare-grid">';
+  ['eco','std','sup'].forEach(function(k){var fi2={eco:0,std:1,sup:2}[k],tc=0;voci.forEach(function(v){tc+=Math.round(v.p[fi2]*s);});var tt=tc*nc;var act=k===fk;cgrid+='<div class="compare-cell '+k+'-h" style="'+(act?'font-weight:700;box-shadow:inset 0 0 0 2px rgba(0,0,0,.1)':'')+'">'+fl[k]+'<div class="compare-price">€'+fmt(tc)+'</div><div class="compare-tot">totale €'+fmt(tt)+'</div></div>';});
+  cgrid+='</div></div>';
+  window._as={fk:fk,stelle:stelle,nc:nc};
+  return tabs+body+cgrid;
+}
+
+function switchF(fk){var s=window._as||{};document.getElementById('dai').innerHTML=renderArredo(fk,s.stelle,s.nc);}
+
+function go(){
+  var p=gv('provincia');
+  if(!gv('regione')||!p){alert('Seleziona regione e provincia.');return;}
+  var stelle=parseInt(gv('stelle')),camere=gn('camere'),occ=gn('occ')/100,adr=gn('adr');
+  var nome=gv('nome')||'Hotel',ak=gv('ambito'),fk=gv('fascia')||'std',nc=gn('ncamere')||camere;
+  var b=bm[stelle],pm=pbm[p]||[1,1],lmv=lm[gv('location')],sv=st[gv('stagionalita')],tgv=tg[gv('target')],agv=ag[gv('aging')],amv=am[ak];
+  var pl=p,reg=gv('regione');
+  if(prov[reg])prov[reg].forEach(function(x){if(x.v===p)pl=x.l;});
+  var g=sv.g,notti=Math.round(camere*g*occ),ratt=notti*adr;
+  var ob=Math.min(b.occ*pm[0]*lmv[0]*sv.oa,0.95),ab=b.adr*pm[1]*lmv[1]*sv.aa;
+  var nb=Math.round(camere*g*ob),rb=nb*Math.max(adr,ab),perso=Math.max(rb-ratt,0);
+  var do_=b.do*agv.om*amv.m*tgv.om,da_=b.da*agv.am*amv.m*tgv.am*pm[1]*sv.aa;
+  var on=Math.min(occ+do_,0.95),an=adr+da_,nn=Math.round(camere*g*on),rn=nn*an,extra=Math.max(Math.round(rn-ratt),0);
+  var showA=(ak==='camere'||ak==='tutto');
+  var cfc=costoFascia(fk,stelle),invA=cfc*nc,invB=Math.round(camere*b.ic*amv.m);
+  var inv=showA&&ak==='camere'?invA:invB;
+  var marg=extra*.35,pby=marg>0?Math.ceil(inv/marg):null;
+  var pc=pby&&pby<=4?'var(--green)':pby&&pby<=7?'var(--amber)':'var(--red)';
+
+  document.getElementById('htag').innerHTML='<div class="ht-name">'+nome+'<span class="ht-badge '+agv.c+'">'+agv.l+'</span></div><div class="ht-meta">'+stelle+'★ · '+pl+' ('+rl[reg]+') · '+ll[gv('location')]+' · '+camere+' camere · Occ. '+Math.round(occ*100)+'% · ADR €'+fmt(adr)+' · '+tgv.l+' · '+sv.l+'</div>';
+  document.getElementById('msgs').innerHTML=
+    '<div class="msg-card loss"><div class="msg-label">Potenziale non espresso</div><div class="big-num" style="color:var(--red)">'+fmtK(perso)+'</div><div class="msub">ricavo annuo perso vs benchmark '+stelle+'★ in provincia di '+pl+'</div></div>'+
+    '<div class="msg-card gain"><div class="msg-label">Extra ricavo post-restyling</div><div class="big-num" style="color:var(--green)">+'+fmtK(extra)+'</div><div class="msub">stima ricavo aggiuntivo annuo dopo l\'intervento</div></div>'+
+    '<div class="msg-card pay"><div class="msg-label">Rientro investimento</div><div class="big-num" style="color:'+pc+'">'+(pby?pby+' anni':'—')+'</div><div class="msub">payback su investimento stimato di '+fmtK(inv)+'</div></div>';
+  document.getElementById('dp').innerHTML=dr('Provincia',pl+' ('+p+')')+dr('Regione',rl[reg])+dr('Stagionalita',sv.l+' ('+g+' gg/anno)')+dr('Target ospiti',tgv.l)+dr('Urgenza intervento',agv.u)+dr('Ambito restyling',amv.l)+(showA?dr('Fascia arredo',fl[fk]+' — '+nc+' camere da rinnovare'):'')+' <div class="insight-box">'+tgv.i+'</div>';
+  document.getElementById('dl').innerHTML=dr('Notti vendute / anno',fmt(notti))+dr('Ricavo attuale stimato',fmtK(ratt)+'/anno')+dr('Benchmark '+stelle+'★ prov. '+p+' ('+Math.round(ob*100)+'% · €'+fmt(ab)+'/notte)',fmtK(rb)+'/anno')+dr('Potenziale non espresso','−'+fmtK(perso)+'/anno','var(--red)');
+  document.getElementById('dg').innerHTML=dr('Aumento occupazione stimato','+'+Math.round(do_*100)+' pt → '+Math.round(on*100)+'%')+dr('Aumento tariffa media stimato','+€'+da_.toFixed(0)+' → €'+fmt(an)+'/notte')+dr('Notti vendute post-restyling',fmt(nn)+' (+'+fmt(nn-notti)+')')+dr('Ricavo stimato post-restyling',fmtK(rn)+'/anno','var(--green)')+dr('Extra ricavo annuo','+'+fmtK(extra),'var(--green)');
+  if(showA){document.getElementById('da').style.display='block';document.getElementById('dai').innerHTML=renderArredo(fk,stelle,nc);}
+  else document.getElementById('da').style.display='none';
+  var ph=dr('Investimento stimato ('+amv.l+')',fmtK(inv))+dr('Margine netto aggiuntivo / anno',fmtK(marg))+dr('Payback stimato',(pby?pby+' anni':'N/D'),pc);
+  if(pby){ph+='<div class="payback-track">';for(var y=1;y<=Math.min(pby+3,15);y++){var d=y<=pby;ph+='<div class="py-dot" style="background:'+(d?'var(--green-bg)':'#f0ede8')+';color:'+(d?'var(--green)':'var(--text-ter)')+'">A'+y+'</div>';}ph+='</div>';}
+  document.getElementById('dpb').innerHTML=ph;
+  document.getElementById('form').style.display='none';
+  document.getElementById('results').classList.add('show');
+  document.getElementById('progress').style.width='100%';
+  window.scrollTo(0,0);
+}
+
+function goBack(){document.getElementById('form').style.display='block';document.getElementById('results').classList.remove('show');document.getElementById('progress').style.width='50%';window.scrollTo(0,0);}
+document.getElementById('logo-img').onerror=function(){this.style.display='none';var s=document.createElement('span');s.style.cssText='font-size:18px;font-weight:700;letter-spacing:4px;color:white;text-transform:uppercase';s.textContent='FARAONI';this.parentNode.insertBefore(s,this);};
+toggleArredo();
+</script>
+</body>
+</html>
