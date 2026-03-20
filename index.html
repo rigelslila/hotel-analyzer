@@ -35,12 +35,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue'
 .field-left{flex:1;min-width:0}
 .field label{font-size:14px;color:var(--text);font-weight:400;display:block}
 .field .hint{font-size:11px;color:var(--text-ter);margin-top:2px}
-.field .benchmark{font-size:11px;color:var(--gold);margin-top:3px;font-weight:500;transition:opacity .3s}
+.field .benchmark{font-size:11px;color:var(--gold);margin-top:3px;font-weight:500;min-height:16px}
 .field select,.field input{font-size:14px;background:none;border:none;outline:none;text-align:right;font-family:inherit;color:var(--text);font-weight:500;-webkit-appearance:none}
 .field input[type=number]{width:72px}
 .field input[type=text]{width:150px;font-weight:400;color:var(--text-sec)}
 .field select{max-width:190px;cursor:pointer}
 select:disabled{color:var(--text-ter)}
+.field input.autofilled{color:var(--gold)}
+.field input.user-edited{color:var(--text)}
 .cta{width:100%;padding:16px;font-size:15px;font-weight:600;border:none;border-radius:14px;background:var(--black);color:var(--white);cursor:pointer;margin-top:24px;letter-spacing:.2px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15)}
 .cta::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 .cta:active{transform:scale(.98);opacity:.9}
@@ -119,21 +121,21 @@ select:disabled{color:var(--text-ter)}
     <div class="slabel">La struttura</div>
     <div class="card">
       <div class="field"><div class="field-left"><label>Nome hotel</label><div class="hint">Opzionale</div></div><input type="text" id="nome" placeholder="Es. Hotel Sole"></div>
-      <div class="field"><label>Regione</label><select id="regione" onchange="updateProv();updateBenchmarks()"><option value="">— seleziona —</option><option value="veneto">Veneto</option><option value="trentino">Trentino-Alto Adige</option><option value="friuli">Friuli-Venezia Giulia</option><option value="emilia">Emilia-Romagna</option></select></div>
-      <div class="field"><label>Provincia</label><select id="provincia" disabled onchange="updateBenchmarks()"><option value="">— prima regione —</option></select></div>
-      <div class="field"><label>Categoria</label><select id="stelle" onchange="updateBenchmarks()"><option value="1">1 stella</option><option value="2">2 stelle</option><option value="3" selected>3 stelle</option><option value="4">4 stelle</option><option value="5">5 stelle</option></select></div>
+      <div class="field"><label>Regione</label><select id="regione" onchange="updateProv();autoFill()"><option value="">— seleziona —</option><option value="veneto">Veneto</option><option value="trentino">Trentino-Alto Adige</option><option value="friuli">Friuli-Venezia Giulia</option><option value="emilia">Emilia-Romagna</option></select></div>
+      <div class="field"><label>Provincia</label><select id="provincia" disabled onchange="autoFill()"><option value="">— prima regione —</option></select></div>
+      <div class="field"><label>Categoria</label><select id="stelle" onchange="autoFill()"><option value="1">1 stella</option><option value="2">2 stelle</option><option value="3" selected>3 stelle</option><option value="4">4 stelle</option><option value="5">5 stelle</option></select></div>
       <div class="field"><label>Numero camere totali</label><input type="number" id="camere" value="30" min="1" max="500" oninput="upProg()"></div>
-      <div class="field"><label>Tipo di location</label><select id="location" onchange="updateBenchmarks()"><option value="city">Centro citta</option><option value="leisure" selected>Leisure / turismo</option><option value="business">Business / fiere</option><option value="seaside">Mare / lago</option><option value="mountain">Montagna</option></select></div>
+      <div class="field"><label>Tipo di location</label><select id="location" onchange="autoFill()"><option value="city">Centro citta</option><option value="leisure" selected>Leisure / turismo</option><option value="business">Business / fiere</option><option value="seaside">Mare / lago</option><option value="mountain">Montagna</option></select></div>
     </div>
     <div class="slabel">Andamento attuale</div>
     <div class="card">
       <div class="field">
         <div class="field-left">
           <label>Occupazione media</label>
-          <div class="hint">% annua stimata del tuo hotel</div>
+          <div class="hint">% annua del tuo hotel</div>
           <div class="benchmark" id="bm-occ"></div>
         </div>
-        <input type="number" id="occ" value="62" min="10" max="100" oninput="upProg()">
+        <input type="number" id="occ" value="" placeholder="—" min="10" max="100" oninput="markEdited('occ');upProg()">
       </div>
       <div class="field">
         <div class="field-left">
@@ -141,7 +143,7 @@ select:disabled{color:var(--text-ter)}
           <div class="hint">Tariffa media del tuo hotel in €</div>
           <div class="benchmark" id="bm-adr"></div>
         </div>
-        <input type="number" id="adr" value="95" min="20" oninput="upProg()">
+        <input type="number" id="adr" value="" placeholder="—" min="20" oninput="markEdited('adr');upProg()">
       </div>
       <div class="field"><label>Stagionalita</label><select id="stagionalita" onchange="upProg()"><option value="annual" selected>Tutto l'anno</option><option value="high">Alta stagione (8-10 mesi)</option><option value="mid">Stagionale (5-7 mesi)</option><option value="short">Breve (3-4 mesi)</option></select></div>
       <div class="field"><label>Target ospiti</label><select id="target" onchange="upProg()"><option value="couples">Coppie / romantico</option><option value="families" selected>Famiglie</option><option value="business">Business / corporate</option><option value="groups">Gruppi / tour operator</option><option value="mixed">Misto</option></select></div>
@@ -197,33 +199,61 @@ var voci=[
   {n:'Finiture e verniciatura',d:'Boiserie, verniciature pareti, piccoli lavori',p:[150,280,560]}
 ];
 
+// traccia se l'utente ha modificato manualmente i campi
+var userEditedOcc=false, userEditedAdr=false;
+
 function gv(id){return document.getElementById(id).value||'';}
 function gn(id){return parseFloat(document.getElementById(id).value)||0;}
 function fmt(x){return Math.round(x).toLocaleString('it-IT');}
 function fmtK(x){return x>=1000?'€'+Math.round(x/1000).toLocaleString('it-IT')+'K':'€'+Math.round(x);}
 function dr(l,v,c){return '<div class="dr"><span class="dl">'+l+'</span><span class="dv"'+(c?' style="color:'+c+'"':'')+'>'+v+'</span></div>';}
 
-// ── BENCHMARK DINAMICI ────────────────────────────────────────────────
-function updateBenchmarks(){
+function markEdited(field){
+  if(field==='occ'){userEditedOcc=true;document.getElementById('occ').classList.remove('autofilled');document.getElementById('occ').classList.add('user-edited');}
+  if(field==='adr'){userEditedAdr=true;document.getElementById('adr').classList.remove('autofilled');document.getElementById('adr').classList.add('user-edited');}
+}
+
+// Calcola e precompila benchmark appena "La struttura" è abbastanza completa
+function autoFill(){
   var stelle=parseInt(gv('stelle'))||3;
   var p=gv('provincia');
   var loc=gv('location')||'leisure';
   var b=bm[stelle]||bm[3];
-  var pm=pbm[p]||[1,1];
+  var pm=pbm[p]||null;
   var lmv=lm[loc]||[1,1];
-
-  var occ_bench=Math.min(b.occ*pm[0]*lmv[0],0.95);
-  var adr_bench=Math.round(b.adr*pm[1]*lmv[1]);
 
   var elOcc=document.getElementById('bm-occ');
   var elAdr=document.getElementById('bm-adr');
+  var inOcc=document.getElementById('occ');
+  var inAdr=document.getElementById('adr');
 
-  if(p){
-    elOcc.textContent='Mercato di riferimento: '+Math.round(occ_bench*100)+'%';
-    elAdr.textContent='Mercato di riferimento: €'+fmt(adr_bench)+'/notte';
+  if(p && pm){
+    var occ_bench=Math.min(b.occ*pm[0]*lmv[0],0.95);
+    var adr_bench=Math.round(b.adr*pm[1]*lmv[1]);
+
+    // Precompila solo se l'utente non ha ancora modificato manualmente
+    if(!userEditedOcc){
+      inOcc.value=Math.round(occ_bench*100);
+      inOcc.classList.add('autofilled');
+      inOcc.classList.remove('user-edited');
+    }
+    if(!userEditedAdr){
+      inAdr.value=adr_bench;
+      inAdr.classList.add('autofilled');
+      inAdr.classList.remove('user-edited');
+    }
+
+    elOcc.textContent='Benchmark mercato: '+Math.round(occ_bench*100)+'%';
+    elAdr.textContent='Benchmark mercato: €'+fmt(adr_bench)+'/notte';
+  } else if(stelle){
+    // Mostra almeno il benchmark nazionale senza provincia
+    var occ_nat=Math.round(b.occ*100);
+    var adr_nat=Math.round(b.adr);
+    elOcc.textContent='Seleziona provincia per benchmark locale';
+    elAdr.textContent='Seleziona provincia per benchmark locale';
   } else {
-    elOcc.textContent=stelle?'Seleziona provincia per il benchmark':'';
-    elAdr.textContent=stelle?'Seleziona provincia per il benchmark':'';
+    elOcc.textContent='';
+    elAdr.textContent='';
   }
   upProg();
 }
@@ -274,6 +304,7 @@ function switchF(fk){var s=window._as||{};document.getElementById('dai').innerHT
 function go(){
   var p=gv('provincia');
   if(!gv('regione')||!p){alert('Seleziona regione e provincia.');return;}
+  if(!gn('occ')||!gn('adr')){alert('Occupazione e prezzo medio sono necessari.');return;}
   var stelle=parseInt(gv('stelle')),camere=gn('camere'),occ=gn('occ')/100,adr=gn('adr');
   var nome=gv('nome')||'Hotel',ak=gv('ambito'),fk=gv('fascia')||'std',nc=gn('ncamere')||camere;
   var b=bm[stelle],pm=pbm[p]||[1,1],lmv=lm[gv('location')],sv=st[gv('stagionalita')],tgv=tg[gv('target')],agv=ag[gv('aging')],amv=am[ak];
@@ -308,10 +339,15 @@ function go(){
   window.scrollTo(0,0);
 }
 
-function goBack(){document.getElementById('form').style.display='block';document.getElementById('results').classList.remove('show');document.getElementById('progress').style.width='50%';window.scrollTo(0,0);}
+function goBack(){
+  userEditedOcc=false;userEditedAdr=false;
+  document.getElementById('form').style.display='block';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('progress').style.width='50%';
+  window.scrollTo(0,0);
+}
 document.getElementById('logo-img').onerror=function(){this.style.display='none';var s=document.createElement('span');s.style.cssText='font-size:18px;font-weight:700;letter-spacing:4px;color:white;text-transform:uppercase';s.textContent='FARAONI';this.parentNode.insertBefore(s,this);};
 toggleArredo();
-updateBenchmarks();
 </script>
 </body>
 </html>
